@@ -34,7 +34,7 @@ class BirdClassifier:
             image = Image.fromarray(image).convert('RGB')
         
         # Preprocess image
-        img_tensor = self.transform(image).unsqueeze(0).to(self.device)
+        img_tensor = self.transforms(image).unsqueeze(0).to(self.device)
         
         # Get prediction
         output = self.model(img_tensor)
@@ -52,7 +52,7 @@ classifier = BirdClassifier()
 # Format available classes into HTML table - 10 per row
 formatted_classes = ['<tr>']
 for i, label in enumerate(classifier.labels):
-    if i > 0 and i % 20 == 0:
+    if i > 0 and i % 10 == 0:
         formatted_classes.append('</tr><tr>')
     formatted_classes.append(f'<td>{label}</td>')
 formatted_classes.append('</tr>')
