@@ -38,5 +38,5 @@ class GradioLambdaFunction(Stack):
 
 
 app = App()
-gradio_lambda = GradioLambdaFunction(app, "GradioLambdaApp", env=my_environment)
+gradio_lambda = GradioLambdaFunction(app, "GradioLambdaTestApp", env=my_environment)
 app.synth()
