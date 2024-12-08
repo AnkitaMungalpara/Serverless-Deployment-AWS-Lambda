@@ -1,0 +1,248 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "GradioLambdaApp": {
+        "id": "GradioLambdaApp",
+        "path": "GradioLambdaApp",
+        "children": {
+          "DeepLearningClassifier": {
+            "id": "DeepLearningClassifier",
+            "path": "GradioLambdaApp/DeepLearningClassifier",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "GradioLambdaApp/DeepLearningClassifier/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "GradioLambdaApp/DeepLearningClassifier/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.168.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "GradioLambdaApp/DeepLearningClassifier/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.168.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.168.0"
+                }
+              },
+              "AssetImage": {
+                "id": "AssetImage",
+                "path": "GradioLambdaApp/DeepLearningClassifier/AssetImage",
+                "children": {
+                  "Staging": {
+                    "id": "Staging",
+                    "path": "GradioLambdaApp/DeepLearningClassifier/AssetImage/Staging",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.168.0"
+                    }
+                  },
+                  "Repository": {
+                    "id": "Repository",
+                    "path": "GradioLambdaApp/DeepLearningClassifier/AssetImage/Repository",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ecr.RepositoryBase",
+                      "version": "2.168.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ecr_assets.DockerImageAsset",
+                  "version": "2.168.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "GradioLambdaApp/DeepLearningClassifier/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "architectures": [
+                      "x86_64"
+                    ],
+                    "code": {
+                      "imageUri": {
+                        "Fn::Sub": "696310106738.dkr.ecr.us-east-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-696310106738-us-east-1:32cac95bb63877c5efe4c4d296b4cbe0639ef10672fbd31b1351ff2e723b1ff9"
+                      }
+                    },
+                    "memorySize": 3008,
+                    "packageType": "Image",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "DeepLearningClassifierServiceRoleB2C51583",
+                        "Arn"
+                      ]
+                    },
+                    "timeout": 300
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.168.0"
+                }
+              },
+              "FunctionUrl": {
+                "id": "FunctionUrl",
+                "path": "GradioLambdaApp/DeepLearningClassifier/FunctionUrl",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "GradioLambdaApp/DeepLearningClassifier/FunctionUrl/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Url",
+                      "aws:cdk:cloudformation:props": {
+                        "authType": "NONE",
+                        "targetFunctionArn": {
+                          "Fn::GetAtt": [
+                            "DeepLearningClassifierB9AA9022",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnUrl",
+                      "version": "2.168.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.FunctionUrl",
+                  "version": "2.168.0"
+                }
+              },
+              "invoke-function-url": {
+                "id": "invoke-function-url",
+                "path": "GradioLambdaApp/DeepLearningClassifier/invoke-function-url",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunctionUrl",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "DeepLearningClassifierB9AA9022",
+                        "Arn"
+                      ]
+                    },
+                    "functionUrlAuthType": "NONE",
+                    "principal": "*"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.168.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.DockerImageFunction",
+              "version": "2.168.0"
+            }
+          },
+          "functionUrl": {
+            "id": "functionUrl",
+            "path": "GradioLambdaApp/functionUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.168.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "GradioLambdaApp/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "GradioLambdaApp/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.168.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "GradioLambdaApp/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.168.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "GradioLambdaApp/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.168.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.168.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.4.2"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.168.0"
+    }
+  }
+}

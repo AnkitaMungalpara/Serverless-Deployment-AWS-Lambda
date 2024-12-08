@@ -1,0 +1,154 @@
+{
+ "Resources": {
+  "DeepLearningClassifierServiceRoleB2C51583": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "GradioLambdaApp/DeepLearningClassifier/ServiceRole/Resource"
+   }
+  },
+  "DeepLearningClassifierB9AA9022": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "x86_64"
+    ],
+    "Code": {
+     "ImageUri": {
+      "Fn::Sub": "696310106738.dkr.ecr.us-east-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-696310106738-us-east-1:32cac95bb63877c5efe4c4d296b4cbe0639ef10672fbd31b1351ff2e723b1ff9"
+     }
+    },
+    "MemorySize": 3008,
+    "PackageType": "Image",
+    "Role": {
+     "Fn::GetAtt": [
+      "DeepLearningClassifierServiceRoleB2C51583",
+      "Arn"
+     ]
+    },
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "DeepLearningClassifierServiceRoleB2C51583"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "GradioLambdaApp/DeepLearningClassifier/Resource",
+    "aws:asset:path": "asset.32cac95bb63877c5efe4c4d296b4cbe0639ef10672fbd31b1351ff2e723b1ff9",
+    "aws:asset:dockerfile-path": "Dockerfile",
+    "aws:asset:property": "Code.ImageUri"
+   }
+  },
+  "DeepLearningClassifierFunctionUrl7DE41627": {
+   "Type": "AWS::Lambda::Url",
+   "Properties": {
+    "AuthType": "NONE",
+    "TargetFunctionArn": {
+     "Fn::GetAtt": [
+      "DeepLearningClassifierB9AA9022",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "GradioLambdaApp/DeepLearningClassifier/FunctionUrl/Resource"
+   }
+  },
+  "DeepLearningClassifierinvokefunctionurl20A27EA1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunctionUrl",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DeepLearningClassifierB9AA9022",
+      "Arn"
+     ]
+    },
+    "FunctionUrlAuthType": "NONE",
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "GradioLambdaApp/DeepLearningClassifier/invoke-function-url"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OSwvCMBCEf4v3dNUKxasPBE+WimeJca1r8yjZBJHS/27jC08zfDMMk8O0mMNkJO+cqXOTaTpBtw9SNWJAx05LczpL6NZONei3Rta4iVYFclasLvbnv+bgdeIfKdEbYh54L0ga6CqnMQVJe4HKHyUzBoa//UUiKYMKW8cUnH8sJQ/9CtlFr1C8KsPLmmyd5nYxtDG8hj+VXpSPcHV2PINpDsXoxkSZjzaQQaje+gTfB7o7/AAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "GradioLambdaApp/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "functionUrl": {
+   "Value": {
+    "Fn::GetAtt": [
+     "DeepLearningClassifierFunctionUrl7DE41627",
+     "FunctionUrl"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
