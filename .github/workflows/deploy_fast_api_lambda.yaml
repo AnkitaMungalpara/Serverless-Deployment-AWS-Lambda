@@ -23,10 +23,10 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.REPO_TOKEN }}
-          ec2-image-id: ami-09aac8d4d1401f685
+          ec2-image-id: ami-08e98955783037d33
           ec2-instance-type: t3.large
           subnet-id: subnet-0e82450b60dee652e
-          security-group-id: sg-01ceb643d8569dabd
+          security-group-id: sg-03b944f92150876aa
   deploy-cdk-lambda:
     name: Deploy cdk
     needs: start-runner
@@ -37,18 +37,12 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Set AWS Secret Access Key
       AWS_DEFAULT_REGION: us-east-1
     steps:
-      - name: Install packages
-        run: |
-          sudo apt-get update 
-          sudo apt-get install -y unzip
-          sudo apt-get install -y awscli  # Install AWS CLI
       - name: AWS Installation check if aws credentials are set up correctly or not
         run: aws s3 ls
       - name: install cdk
         run: |
           npm --version
           node --version
-          cdk --help
           sudo systemctl start docker
           sudo systemctl enable docker
           docker image ls
