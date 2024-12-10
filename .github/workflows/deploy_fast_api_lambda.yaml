@@ -23,10 +23,10 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.REPO_TOKEN }}
-          ec2-image-id: ami-0ff5e0a104bf330af
+          ec2-image-id: ami-09aac8d4d1401f685
           ec2-instance-type: t3.large
-          subnet-id: subnet-0c336abf4a4711538
-          security-group-id: sg-0e0cd882270b5e85d
+          subnet-id: subnet-0e82450b60dee652e
+          security-group-id: sg-01ceb643d8569dabd
   deploy-cdk-lambda:
     name: Deploy cdk
     needs: start-runner
@@ -40,9 +40,10 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update 
-          sudo apt-get install unzip
-      - name: AWS Installation check if aws credentilas are set up correctly or not
-        run:  aws s3 ls
+          sudo apt-get install -y unzip
+          sudo apt-get install -y awscli  # Install AWS CLI
+      - name: AWS Installation check if aws credentials are set up correctly or not
+        run: aws s3 ls
       - name: install cdk
         run: |
           npm --version
