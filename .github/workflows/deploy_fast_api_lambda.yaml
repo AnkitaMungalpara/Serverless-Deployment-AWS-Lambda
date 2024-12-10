@@ -23,7 +23,7 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.REPO_TOKEN }}
-          ec2-image-id: ami-0e3e328ea460b75c6
+          ec2-image-id: ami-0f081dda006db6f62
           ec2-instance-type: t3.large
           subnet-id: subnet-0e82450b60dee652e
           security-group-id: sg-03b944f92150876aa
