@@ -1,0 +1,84 @@
+name: lambda-onnx-fastapi-fasthtml-food-classifier
+on:
+  push:
+    branches:
+      - main
+jobs:
+  start-runner:
+    name: Start self-hosted EC2 runner for checking test coverage
+    runs-on: ubuntu-latest
+    outputs:
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: start
+          github-token: ${{ secrets.REPO_TOKEN }}
+          ec2-image-id: ami-05b9a4f4a4605c80e
+          ec2-instance-type: t3.large
+          subnet-id: subnet-0fbb0a4e45e210015
+          security-group-id: sg-0326e5442e2817762
+  deploy-cdk-lambda:
+    name: Deploy cdk
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    env:
+      HOME: /home/runner
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Set AWS Access Key ID
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Set AWS Secret Access Key
+      AWS_DEFAULT_REGION: us-east-1
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt-get update 
+          sudo apt-get install unzip
+      - name: AWS Installation check if aws credentilas are set up correctly or not
+        run:  aws s3 ls
+      - name: install cdk
+        run: |
+          npm --version
+          node --version
+          cdk --help
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          docker image ls
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: deploy cdk
+        run:  |
+          python3 --version
+          python3 -m venv my_venv
+          source my_venv/bin/activate
+          pip install -r requirements.txt
+          cdk bootstrap
+          cdk deploy --require-approval never
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner # required to get output from the start-runner job
+      - deploy-cdk-lambda # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Stop EC2 runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: stop
+          github-token: ${{ secrets.REPO_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
