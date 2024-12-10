@@ -23,10 +23,10 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.REPO_TOKEN }}
-          ec2-image-id: ami-023c94e94967978bf
+          ec2-image-id: ami-0ff5e0a104bf330af
           ec2-instance-type: t3.large
-          subnet-id: subnet-0e82450b60dee652e
-          security-group-id: sg-0b10d055425d7739c
+          subnet-id: subnet-0c336abf4a4711538
+          security-group-id: sg-0e0cd882270b5e85d
   deploy-cdk-lambda:
     name: Deploy cdk
     needs: start-runner
