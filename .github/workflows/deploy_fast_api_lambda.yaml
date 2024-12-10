@@ -27,6 +27,10 @@ jobs:
           ec2-instance-type: t3.large
           subnet-id: subnet-0e82450b60dee652e
           security-group-id: sg-03b944f92150876aa
+      - name: Start Docker
+        run: |
+          sudo systemctl start docker
+          sudo systemctl enable docker
   deploy-cdk-lambda:
     name: Deploy cdk
     needs: start-runner
